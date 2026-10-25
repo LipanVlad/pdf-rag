@@ -1,0 +1,20 @@
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: pdf-rag
+  ai:
+    model:
+      chat: google-genai
+      embedding: google-genai
+    google:
+      genai:
+        api-key: ${GOOGLE_GENAI_API_KEY}
+        embedding:
+          api-key: ${GOOGLE_GENAI_API_KEY}
+    vectorstore:
+      pgvector:
+        dimensions: 768
+        distance-type: COSINE_DISTANCE
+        index-type: HNSW
+        initialize-schema: true
