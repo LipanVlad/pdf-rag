@@ -1,6 +1,5 @@
 package com.lipan.pdfrag.service;
 
-import com.lipan.pdfrag.dto.ChatRequest;
 import com.lipan.pdfrag.dto.ChatResponse;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -15,7 +14,7 @@ public class ChatService {
     public ChatService(VectorStore vectorStore){
         this.vectorStore = vectorStore;
     }
-    public ChatResponse getClosest3Embeds(String userQuery){
+    public ChatResponse findSimilarDocuments(String userQuery){
         try {
             SearchRequest searchRequest = SearchRequest.builder()
                     .query(userQuery)

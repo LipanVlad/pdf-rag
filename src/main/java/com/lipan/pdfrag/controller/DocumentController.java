@@ -19,6 +19,13 @@ public class DocumentController {
 
     @PostMapping("/api/documents/upload")
     public ResponseEntity<DocumentUploadResponse> uploadRawDocument (@RequestParam MultipartFile file){
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("Uploaded file cannot be empty");
+        }
+        if (!"application/pdf".equals(file.getContentType())) {
+            throw new IllegalArgumentException("Only PDF files are supported");
+        }
+
         DocumentUploadResponse response = ingestionService.documentEmbedding(file);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

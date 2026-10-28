@@ -3,14 +3,12 @@ package com.lipan.pdfrag.controller;
 import com.lipan.pdfrag.dto.ChatRequest;
 import com.lipan.pdfrag.dto.ChatResponse;
 import com.lipan.pdfrag.service.ChatService;
-import org.springframework.ai.document.Document;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class ChatController {
@@ -20,8 +18,8 @@ public class ChatController {
     }
 
     @PostMapping("/api/chat")
-    public ResponseEntity<ChatResponse> getThe3ClosestEmbeds(@RequestBody ChatRequest chatRequest){
-        ChatResponse chatResponse = chatService.getClosest3Embeds(chatRequest.userQuery());
+    public ResponseEntity<ChatResponse> getThe3ClosestEmbeds(@Valid @RequestBody ChatRequest chatRequest){
+        ChatResponse chatResponse = chatService.findSimilarDocuments(chatRequest.userQuery());
         return ResponseEntity.status(HttpStatus.OK).body(chatResponse);
     }
 }
