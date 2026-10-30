@@ -12,6 +12,8 @@ spring:
         api-key: ${GOOGLE_GENAI_API_KEY}
         embedding:
           api-key: ${GOOGLE_GENAI_API_KEY}
+          text:
+            dimensions: 768
     vectorstore:
       pgvector:
         dimensions: 768
