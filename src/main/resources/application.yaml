@@ -10,6 +10,9 @@ spring:
     google:
       genai:
         api-key: ${GOOGLE_GENAI_API_KEY}
+        chat:
+          options:
+            model: gemini-3.8-flash
         embedding:
           api-key: ${GOOGLE_GENAI_API_KEY}
           text:

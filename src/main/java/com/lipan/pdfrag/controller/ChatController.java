@@ -18,8 +18,8 @@ public class ChatController {
     }
 
     @PostMapping("/api/chat")
-    public ResponseEntity<ChatResponse> getThe3ClosestEmbeds(@Valid @RequestBody ChatRequest chatRequest){
-        ChatResponse chatResponse = chatService.findSimilarDocuments(chatRequest.userQuery());
+    public ResponseEntity<ChatResponse> getChatResponse(@Valid @RequestBody ChatRequest chatRequest){
+        ChatResponse chatResponse = chatService.generateChatResponse(chatRequest.userQuery());
         return ResponseEntity.status(HttpStatus.OK).body(chatResponse);
     }
 }
