@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class IngestionService {
@@ -35,6 +36,13 @@ public class IngestionService {
                     document.getChunkCount()
             );
     }
+    public String deleteDocument(Long id){
+        PdfDocument doc = pdfDocumentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Document with id " + id + " not found"));
+        pdfDocumentRepository.deleteById(id);
+        return ("Pdf with id: " + id + " has been deleted!");
+    }
+
     public List<PdfDocumentResponse> getAllDocuments(){
         List<PdfDocument> rawPdfList = pdfDocumentRepository.findAll();
 

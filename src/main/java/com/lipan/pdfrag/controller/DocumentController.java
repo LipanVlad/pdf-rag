@@ -3,6 +3,7 @@ package com.lipan.pdfrag.controller;
 import com.lipan.pdfrag.dto.DocumentUploadResponse;
 import com.lipan.pdfrag.dto.PdfDocumentResponse;
 import com.lipan.pdfrag.service.IngestionService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,11 @@ public class DocumentController {
     @GetMapping("/api/documents")
     public ResponseEntity<List<PdfDocumentResponse>> getDocuments(){
         return ResponseEntity.status(HttpStatus.OK).body(ingestionService.getAllDocuments());
+    }
+    @DeleteMapping("/api/documents/{id}")
+    public ResponseEntity<String> deleteDocument(@PathVariable Long id){
+        String response = ingestionService.deleteDocument(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/api/documents/upload")

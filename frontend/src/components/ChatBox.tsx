@@ -5,14 +5,20 @@ interface ChatResponse {
     sources: any[];
 }
 
-function ChatBox() {
+interface ChatEntry {
+    userQuestion: string;
+    llmAnswer: string;
+}
 
+function ChatBox() {
     const [question, setQuestion] = useState("")
-    const [answer, setAnswer] = useState("")
+    const [history, setHistory] = useState<ChatEntry[]>([])
+    const [errorMessage, setErrorMessage] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [sources, setSources] = useState<any[]>([])
 
     async function askQuestion() {
+        setErrorMessage("")
         if (!question.trim()) return
         setIsLoading(true)
         try {
@@ -23,19 +29,21 @@ function ChatBox() {
             })
             const data: ChatResponse = await response.json()
             if (!response.ok) {
-                setAnswer("Error: " + data.message)
+                setErrorMessage("Error: " + data.message)
                 return
             }
-            setAnswer(data.message)
+
+            setHistory((prev) => [...prev, { userQuestion: question, llmAnswer: data.message }])
             setSources(data.sources)
             setQuestion("")
         } catch (error) {
             console.error("[Chat] Network failure:", error)
-            setAnswer("Could not reach the backend server.")
+            setErrorMessage("Could not reach the backend")
         } finally {
             setIsLoading(false)
         }
     }
+
     return (
         <section>
             <h2>2. Ask a Question</h2>
@@ -48,16 +56,27 @@ function ChatBox() {
             <button onClick={askQuestion} disabled={isLoading}>
                 {isLoading ? "Thinking..." : "Ask"}
             </button>
-            <p>{answer}</p>
+
+            <p>{errorMessage}</p>
+
+            {
+                history.map((entry, index) => (
+                <div key={index}>
+                    <p>Q: {entry.userQuestion}</p>
+                    <p>A: {entry.llmAnswer}</p>
+                    <hr />
+                </div>
+            ))}
+
             {
                 sources.map((chunk) => (
-                    <div key={chunk.id}>
-                        <p>Page {chunk.metadata.page_number}</p>
-                        <p>{chunk.text}</p>
-                    </div>
-                ))
-            }
+                <div key={chunk.id}>
+                    <p>Page {chunk.metadata.page_number}</p>
+                    <p>{chunk.text}</p>
+                </div>
+            ))}
         </section>
     )
 }
+
 export default ChatBox
