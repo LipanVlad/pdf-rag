@@ -9,11 +9,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class ChatService {
     private final VectorStore vectorStore;
     private final ChatClient chatClient;
+    private static final Logger log = LoggerFactory.getLogger(ChatService.class);
     public ChatService(VectorStore vectorStore, ChatClient.Builder chatClientBuilder) {
         this.vectorStore = vectorStore;
         this.chatClient = chatClientBuilder.build();
@@ -24,10 +27,12 @@ public class ChatService {
                     .query(userQuery)
                     .topK(3)
                     .build();
+            log.info("Searching vectorStore for query: " + userQuery + "\n");
             List<Document> similarDocuments = vectorStore.similaritySearch(searchRequest);
             if (similarDocuments.isEmpty()) {
                 return new ChatResponse("No relevant documents found.", similarDocuments);
             }
+            log.info("Retrieved " + similarDocuments.size() + " similar chunks. Calling LLM...\n");
                 String context = similarDocuments.stream()
                         .map(Document::getText)
                         .collect(Collectors.joining("\n\n---\n\n"));
@@ -48,6 +53,7 @@ public class ChatService {
                         .user(userQuery)
                         .call()
                         .content();
+                log.info("LLM response generated successfully: " + llmResponse + "\n");
                 return new ChatResponse(llmResponse, similarDocuments);
 
     }

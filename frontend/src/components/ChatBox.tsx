@@ -28,7 +28,7 @@ function ChatBox() {
             }
             setAnswer(data.message)
             setSources(data.sources)
-            setQuestion("") // why doesn't this auto-update the input value?
+            setQuestion("")
         } catch (error) {
             console.error("[Chat] Network failure:", error)
             setAnswer("Could not reach the backend server.")

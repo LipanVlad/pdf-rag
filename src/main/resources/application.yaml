@@ -3,6 +3,9 @@ spring:
     import: "optional:file:.env[.properties]"
   application:
     name: pdf-rag
+  jpa:
+    hibernate:
+      ddl-auto: update
   ai:
     model:
       chat: google-genai
