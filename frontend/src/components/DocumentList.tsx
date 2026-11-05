@@ -41,7 +41,7 @@ function DocumentList({ refreshList }: DocumentListProps) {
             <h2>Uploaded Documents ({documents.length})</h2>
             {documents.map((doc) => (
                 <div key={doc.id}>
-                    <p>{doc.fileName} — {doc.chunkCount} chunks</p>
+                    <p>{doc.fileName} - {doc.chunkCount} chunks</p>
                     <button onClick={() => deleteDoc(doc.id)}>
                         Delete
                     </button>
