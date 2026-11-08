@@ -39,6 +39,7 @@ public class IngestionService {
     public String deleteDocument(Long id){
         PdfDocument doc = pdfDocumentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Document with id " + id + " not found"));
+        vectorStore.delete("pdfDocumentId == " + id);
         pdfDocumentRepository.deleteById(id);
         return ("Pdf with id: " + id + " has been deleted!");
     }
@@ -56,17 +57,20 @@ public class IngestionService {
     public DocumentUploadResponse documentEmbedding(MultipartFile file){
         try{
             Resource pdfResource = new InputStreamResource(file.getInputStream());
-
+            PdfDocument pdfDocument = new PdfDocument(file.getOriginalFilename(), file.getSize(), LocalDateTime.now());
+            PdfDocument savedPdfDocument = pdfDocumentRepository.save(pdfDocument);
             PagePdfDocumentReader reader = new PagePdfDocumentReader(pdfResource);
             List<Document> pages = reader.read();
-
+            pages.forEach((page)->{
+                page.getMetadata().put("pdfDocumentId", savedPdfDocument.getId());
+            });
             TokenTextSplitter splitter = TokenTextSplitter.builder()
                     .withChunkSize(300)
                     .build();
             List<Document> chunks = splitter.apply(pages);
             vectorStore.accept(chunks);
 
-            PdfDocument pdfDocument = new PdfDocument(file.getOriginalFilename(), file.getSize(), LocalDateTime.now(), chunks.size());
+            pdfDocument.setChunkCount(chunks.size());
             pdfDocumentRepository.save(pdfDocument);
 
             return new DocumentUploadResponse(

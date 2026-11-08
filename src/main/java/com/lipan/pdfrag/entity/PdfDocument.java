@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,12 @@ public class PdfDocument {
         this.fileSize = fileSize;
         this.uploadTimestamp = uploadTimestamp;
         this.chunkCount = chunkCount;
+    }
+
+    public PdfDocument(String fileName, Long fileSize, LocalDateTime uploadTimestamp) {
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.uploadTimestamp = uploadTimestamp;
     }
 
     public Long getId() {

@@ -13,7 +13,7 @@ interface DocumentListProps {
 
 function DocumentList({ refreshList }: DocumentListProps) {
     const [documents, setDocuments] = useState<PdfDocumentResponse[]>([])
-    const [deleteMessage, setDeleteMessage] = useState<String>("")
+    const [responseMessage, setResponseMessage] = useState<String>("")
     async function loadDocuments() {
         const response = await fetch("http://localhost:8080/api/documents")
         const data: PdfDocumentResponse[] = await response.json()
@@ -24,18 +24,28 @@ function DocumentList({ refreshList }: DocumentListProps) {
     }, [refreshList])
 
     async function deleteDoc(deletedDocId:number){
-        const response = await fetch("http://localhost:8080/api/documents/" + deletedDocId, {
-            method: "DELETE"
-        })
-        const data:String = await response.text();
-        if(!response.ok){
-            setDeleteMessage("Error!");
-            return;
+        try {
+            const response = await fetch("http://localhost:8080/api/documents/" + deletedDocId, {
+                method: "DELETE"
+            })
+            const data: String = await response.text();
+            if (!response.ok) {
+                setResponseMessage("Error: File could not be deleted")
+                return
+            }
+            setResponseMessage(data)
+            setDocuments(documents.filter((doc) => {
+                return doc.id !== deletedDocId
+            }))
+        }catch (error) {
+            console.error("[Chat] Network failure:", error)
+            setResponseMessage("Error: Could not reach the backend")
+        }finally {
+            if(responseMessage === ""){
+            setResponseMessage("Error: File could not be deleted")
+            }
         }
-        setDeleteMessage(data)
-        setDocuments(documents.filter((doc) => {return doc.id !== deletedDocId}))
-    }
-
+        }
     return (
         <section>
             <h2>Uploaded Documents ({documents.length})</h2>
@@ -47,7 +57,7 @@ function DocumentList({ refreshList }: DocumentListProps) {
                     </button>
                 </div>
             ))}
-            <p>{deleteMessage}</p>
+            <p>{responseMessage}</p>
         </section>
     )
 }

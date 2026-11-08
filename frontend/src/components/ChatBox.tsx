@@ -17,7 +17,8 @@ function ChatBox() {
     const [isLoading, setIsLoading] = useState(false)
     const [sources, setSources] = useState<any[]>([])
 
-    async function askQuestion() {
+    async function askQuestion(e) {
+        e.preventDefault()
         setErrorMessage("")
         if (!question.trim()) return
         setIsLoading(true)
@@ -47,15 +48,15 @@ function ChatBox() {
     return (
         <section>
             <h2>2. Ask a Question</h2>
-            <input
-                type="text"
-                placeholder="Ask a question..."
+            <form onSubmit={(e) => askQuestion(e)}>
+                <input
+                type={"text"}
+                placeholder={"Ask a question"}
                 value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-            />
-            <button onClick={askQuestion} disabled={isLoading}>
-                {isLoading ? "Thinking..." : "Ask"}
-            </button>
+                onChange={(e)=> setQuestion(e.target.value)}
+                />
+                <button type={"submit"} disabled={isLoading}>{isLoading ? "Thinking..." : "Ask"}</button>
+            </form>
 
             <p>{errorMessage}</p>
 
