@@ -14,6 +14,7 @@ function PdfUploader({ onUploadSuccess }: PdfUploaderProps) {
     const [isUploading, setIsUploading] = useState(false)
 
     async function handleUpload() {
+        setUploadStatus("")
         if (!selectedFile) return
         setIsUploading(true)
         const formData = new FormData()
@@ -48,7 +49,7 @@ function PdfUploader({ onUploadSuccess }: PdfUploaderProps) {
                 onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
             />
 
-            <button onClick={handleUpload} disabled={!selectedFile}>
+            <button onClick={handleUpload} disabled={!selectedFile || isUploading}>
                 {isUploading ? "Uploading..." : "Upload PDF"}
             </button>
 

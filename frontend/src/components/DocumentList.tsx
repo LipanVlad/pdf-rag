@@ -13,22 +13,35 @@ interface DocumentListProps {
 
 function DocumentList({ refreshList }: DocumentListProps) {
     const [documents, setDocuments] = useState<PdfDocumentResponse[]>([])
-    const [responseMessage, setResponseMessage] = useState<String>("")
+    const [responseMessage, setResponseMessage] = useState<string>("")
+
     async function loadDocuments() {
-        const response = await fetch("http://localhost:8080/api/documents")
-        const data: PdfDocumentResponse[] = await response.json()
-        setDocuments(data)
+        try {
+            const response = await fetch("http://localhost:8080/api/documents")
+            if (!response.ok) {
+                setResponseMessage("Error: Could not load documents")
+                return
+            }
+            const data: PdfDocumentResponse[] = await response.json()
+            setDocuments(data)
+        } catch (error) {
+            setResponseMessage("Error: Could not reach the backend")
+            console.error("Load failed: ", error)
+            return
+        }
     }
+
     useEffect(() => {
         loadDocuments()
     }, [refreshList])
 
-    async function deleteDoc(deletedDocId:number){
+    async function deleteDoc(deletedDocId: number) {
+        setResponseMessage("")
         try {
             const response = await fetch("http://localhost:8080/api/documents/" + deletedDocId, {
                 method: "DELETE"
             })
-            const data: String = await response.text();
+            const data: string = await response.text();
             if (!response.ok) {
                 setResponseMessage("Error: File could not be deleted")
                 return
@@ -37,15 +50,11 @@ function DocumentList({ refreshList }: DocumentListProps) {
             setDocuments(documents.filter((doc) => {
                 return doc.id !== deletedDocId
             }))
-        }catch (error) {
+        } catch (error) {
             console.error("[Chat] Network failure:", error)
             setResponseMessage("Error: Could not reach the backend")
-        }finally {
-            if(responseMessage === ""){
-            setResponseMessage("Error: File could not be deleted")
-            }
         }
-        }
+    }
     return (
         <section>
             <h2>Uploaded Documents ({documents.length})</h2>
