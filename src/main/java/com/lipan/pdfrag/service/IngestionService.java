@@ -63,6 +63,7 @@ public class IngestionService {
             List<Document> pages = reader.read();
             pages.forEach((page)->{
                 page.getMetadata().put("pdfDocumentId", savedPdfDocument.getId());
+                page.getMetadata().put("pdfDocumentName", savedPdfDocument.getFileName());
             });
             TokenTextSplitter splitter = TokenTextSplitter.builder()
                     .withChunkSize(300)

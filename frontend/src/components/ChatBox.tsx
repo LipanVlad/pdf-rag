@@ -72,6 +72,7 @@ function ChatBox() {
             {
                 sources.map((chunk) => (
                 <div key={chunk.id}>
+                    <p>Pdf name: {chunk.metadata.pdfDocumentName}</p>
                     <p>Page {chunk.metadata.page_number}</p>
                     <p>{chunk.text}</p>
                 </div>
